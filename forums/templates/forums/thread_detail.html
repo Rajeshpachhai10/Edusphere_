@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+{% block title %}{{ thread.title }}{% endblock %}
+
+{% block content %}
+<div class="forum-page">
+    <div class="container">
+        <a href="{% url 'forums:thread_list' thread.course.slug %}" class="forum-back-link">← Back to Discussions</a>
+
+        <div class="forum-op-card">
+            {% if thread.is_pinned %}<span class="forum-pin-badge">📌 Pinned</span>{% endif %}
+            <h1>{{ thread.title }}</h1>
+            <div class="forum-thread-meta">
+                <span>{{ thread.author.first_name }} {{ thread.author.last_name }}</span>
+                <span class="role-badge {{ thread.author.role }} ms-1">{{ thread.author.role }}</span>
+                <span>·</span>
+                <span>{{ thread.created_at|date:"M d, Y — g:i A" }}</span>
+            </div>
+            <p class="forum-op-body">{{ thread.body|linebreaks }}</p>
+        </div>
+
+        <h4 class="forum-replies-heading">{{ posts|length }} Repl{{ posts|length|pluralize:"y,ies" }}</h4>
+
+        <div class="forum-post-list">
+            {% for post in posts %}
+            <div class="forum-post-card">
+                <div class="forum-thread-meta">
+                    <span>{{ post.author.first_name }} {{ post.author.last_name }}</span>
+                    <span class="role-badge {{ post.author.role }} ms-1">{{ post.author.role }}</span>
+                    <span>·</span>
+                    <span>{{ post.created_at|date:"M d, Y — g:i A" }}</span>
+                </div>
+                <p class="forum-post-body">{{ post.body|linebreaks }}</p>
+            </div>
+            {% endfor %}
+        </div>
+
+        <form method="post" action="{% url 'forums:reply' thread.id %}" class="forum-reply-form">
+            {% csrf_token %}
+            <label for="id_reply_body">Your Reply</label>
+            <textarea id="id_reply_body" name="body" class="form-control" rows="4" placeholder="Write a reply..." required></textarea>
+            <button type="submit" class="btn btn-accent mt-2">Post Reply</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

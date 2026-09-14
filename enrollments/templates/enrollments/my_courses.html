@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+
+{% block title %}My Courses{% endblock %}
+
+{% block content %}
+<div class="my-courses-page">
+  <div class="my-courses-header">
+    <h1>My Courses</h1>
+    <p>Continue where you left off.</p>
+  </div>
+
+  {% if enrollments %}
+    <div class="my-courses-grid">
+      {% for enrollment in enrollments %}
+        <div class="my-course-card">
+          {% if enrollment.course.thumbnail %}
+            <img src="{{ enrollment.course.thumbnail.url }}" alt="{{ enrollment.course.title }}" class="my-course-thumb">
+          {% else %}
+            <div class="my-course-thumb my-course-thumb-placeholder"></div>
+          {% endif %}
+
+          <div class="my-course-body">
+            <h3>{{ enrollment.course.title }}</h3>
+            <p class="my-course-instructor">by {{ enrollment.course.instructor.get_full_name }}</p>
+
+            <div class="my-course-progress-bar">
+              <div class="my-course-progress-fill" style="width: {{ enrollment.progress_percentage }}%;"></div>
+            </div>
+            <p class="my-course-progress-text">{{ enrollment.progress_percentage }}% complete</p>
+
+            <a href="{% url 'enrollments:continue_course' enrollment.course.slug %}" class="btn-continue">
+              {% if enrollment.progress_percentage == 0 %}Start Course{% else %}Continue{% endif %}
+            </a>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <div class="my-courses-empty">
+      <p>You haven't enrolled in any courses yet.</p>
+      <a href="{% url 'courses:course_list' %}" class="btn-primary-pill">Browse Courses</a>
+    </div>
+  {% endif %}
+</div>
+{% endblock %}

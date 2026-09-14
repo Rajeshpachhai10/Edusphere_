@@ -1,0 +1,88 @@
+{% extends 'base.html' %}
+{% block title %}Payment Oversight — EduSphere{% endblock %}
+
+{% block content %}
+<div class="dashboard-hero">
+    <div class="container">
+        <h1>Payment Oversight</h1>
+        <p>All orders across the platform</p>
+    </div>
+</div>
+
+<div class="container dashboard-container">
+    <form method="get" class="oversight-filter-bar">
+        <select name="status" class="form-control oversight-status-select">
+            <option value="" {% if current_status == '' %}selected{% endif %}>All statuses</option>
+            <option value="pending" {% if current_status == 'pending' %}selected{% endif %}>Pending</option>
+            <option value="completed" {% if current_status == 'completed' %}selected{% endif %}>Completed</option>
+            <option value="failed" {% if current_status == 'failed' %}selected{% endif %}>Failed</option>
+        </select>
+        <button type="submit" class="btn btn-primary">Filter</button>
+        {% if current_status %}
+        <a href="{% url 'dashboard:payment_oversight' %}" class="btn btn-sm-outline">Clear</a>
+        {% endif %}
+    </form>
+
+    {% if orders %}
+    <div class="oversight-table-wrapper">
+        <table class="oversight-table">
+            <thead>
+                <tr>
+                    <th>Student</th>
+                    <th>Course</th>
+                    <th>Amount</th>
+                    <th>Date</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for order in orders %}
+                <tr>
+                    <td>{{ order.student.email }}</td>
+                    <td>{{ order.course.title }}</td>
+                    <td>Rs. {{ order.total_amount }}</td>
+                    <td>{{ order.created_at|date:"M d, Y" }}</td>
+                    <td>
+                        {% if order.status == 'completed' %}
+                            <span class="status-pill status-completed"><span class="status-dot"></span> Completed</span>
+                        {% elif order.status == 'pending' %}
+                            <span class="status-pill status-pending"><span class="status-dot"></span> Pending</span>
+                        {% else %}
+                            <span class="status-pill status-failed"><span class="status-dot"></span> Failed</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if order.status == 'pending' %}
+                        <form method="post" action="{% url 'dashboard:mark_order_failed' order.pk %}">
+                            {% csrf_token %}
+                            <button type="submit" class="btn-sm-outline btn-danger-outline">Mark as Failed</button>
+                        </form>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    {% if is_paginated %}
+    <div class="oversight-pagination">
+        {% if page_obj.has_previous %}
+        <a href="?page={{ page_obj.previous_page_number }}{% if current_status %}&status={{ current_status }}{% endif %}" class="btn-sm-outline">Previous</a>
+        {% endif %}
+        <span class="oversight-page-info">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+        {% if page_obj.has_next %}
+        <a href="?page={{ page_obj.next_page_number }}{% if current_status %}&status={{ current_status }}{% endif %}" class="btn-sm-outline">Next</a>
+        {% endif %}
+    </div>
+    {% endif %}
+
+    {% else %}
+    <div class="empty-state">
+        <div class="icon">💳</div>
+        <p>No orders match your filter.</p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

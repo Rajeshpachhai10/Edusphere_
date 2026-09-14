@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ quiz.title }} - EduSphere{% endblock %}
+
+{% block content %}
+<div class="quiz-page">
+    <div class="container">
+        <div class="quiz-header">
+            <span class="quiz-eyebrow">{{ module.course.title }} · {{ module.title }}</span>
+            <h1>{{ quiz.title }}</h1>
+            {% if quiz.instructions %}
+            <p class="quiz-instructions">{{ quiz.instructions }}</p>
+            {% endif %}
+            <div class="quiz-meta-bar">
+                <span>{{ questions|length }} question{{ questions|length|pluralize }}</span>
+                <span>·</span>
+                <span>Passing score: {{ quiz.passing_score }}%</span>
+            </div>
+        </div>
+
+        <form method="post" action="{% url 'quizzes:submit_quiz' module.id %}" class="quiz-form">
+            {% csrf_token %}
+
+            {% for question in questions %}
+            <div class="quiz-question-card">
+                <div class="quiz-question-number">Question {{ forloop.counter }}</div>
+                <p class="quiz-question-text">{{ question.text }}</p>
+
+                <div class="quiz-choices">
+                    {% for choice in question.choices.all %}
+                    <label class="quiz-choice-option">
+                        <input type="radio"
+                               name="question_{{ question.id }}"
+                               value="{{ choice.id }}"
+                               required>
+                        <span class="quiz-choice-text">{{ choice.text }}</span>
+                    </label>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endfor %}
+
+            <div class="quiz-submit-bar">
+                <button type="submit" class="btn btn-accent btn-lg">Submit Quiz</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

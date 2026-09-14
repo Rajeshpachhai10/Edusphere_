@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+{% block title %}Add Question — {{ quiz.title }}{% endblock %}
+
+{% block content %}
+<div class="quiz-page">
+    <a href="{% url 'quizzes:manage_quiz' module.id %}" class="forum-back-link">
+        &larr; {{ quiz.title }}
+    </a>
+
+    <div class="forum-form-card">
+        <h1>Add Question</h1>
+
+        <form method="post">
+            {% csrf_token %}
+            {{ formset.management_form }}
+
+            <label for="{{ form.text.id_for_label }}">Question Text</label>
+            {{ form.text }}
+            {% if form.text.errors %}
+                <div class="field-error">{{ form.text.errors.0 }}</div>
+            {% endif %}
+
+            <label for="{{ form.order.id_for_label }}">Order</label>
+            {{ form.order }}
+            {% if form.order.errors %}
+                <div class="field-error">{{ form.order.errors.0 }}</div>
+            {% endif %}
+
+            <h5 class="fw-bold mt-4 mb-2">Choices</h5>
+            <p class="text-muted small mb-3">Fill in at least 2 choices and check the box next to the one correct answer.</p>
+
+            {% if formset.non_form_errors %}
+                <div class="field-error mb-2">{{ formset.non_form_errors.0 }}</div>
+            {% endif %}
+
+            {% for cform in formset %}
+            <div class="d-flex align-items-center gap-2 mb-2">
+                {{ cform.id }}
+                {{ cform.is_correct }}
+                <div class="flex-grow-1">
+                    {{ cform.text }}
+                </div>
+            </div>
+            {% if cform.text.errors %}
+                <div class="field-error mb-2">{{ cform.text.errors.0 }}</div>
+            {% endif %}
+            {% endfor %}
+
+            <div class="forum-form-actions">
+                <a href="{% url 'quizzes:manage_quiz' module.id %}" class="btn btn-outline-secondary">Cancel</a>
+                <button type="submit" class="btn btn-primary">Save Question</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

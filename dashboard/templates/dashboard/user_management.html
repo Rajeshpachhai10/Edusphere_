@@ -1,0 +1,94 @@
+{% extends 'base.html' %}
+{% block title %}User Management — EduSphere{% endblock %}
+
+{% block content %}
+<div class="dashboard-hero">
+    <div class="container">
+        <h1>User Management</h1>
+        <p>Students and instructors on the platform</p>
+    </div>
+</div>
+
+<div class="container dashboard-container">
+    <form method="get" class="oversight-filter-bar">
+        <input
+            type="text"
+            name="q"
+            value="{{ current_search }}"
+            placeholder="Search by email..."
+            class="form-control oversight-search-input"
+        >
+        <select name="role" class="form-control oversight-status-select">
+            <option value="" {% if current_role == '' %}selected{% endif %}>All roles</option>
+            <option value="student" {% if current_role == 'student' %}selected{% endif %}>Students</option>
+            <option value="instructor" {% if current_role == 'instructor' %}selected{% endif %}>Instructors</option>
+        </select>
+        <button type="submit" class="btn btn-primary">Filter</button>
+        {% if current_search or current_role %}
+        <a href="{% url 'dashboard:user_management' %}" class="btn btn-sm-outline">Clear</a>
+        {% endif %}
+    </form>
+
+    {% if users %}
+    <div class="oversight-table-wrapper">
+        <table class="oversight-table">
+            <thead>
+                <tr>
+                    <th>Email</th>
+                    <th>Name</th>
+                    <th>Role</th>
+                    <th>Joined</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for u in users %}
+                <tr>
+                    <td class="oversight-course-title">{{ u.email }}</td>
+                    <td>{{ u.first_name }} {{ u.last_name }}</td>
+                    <td><span class="role-badge {{ u.role }}">{{ u.role }}</span></td>
+                    <td>{{ u.created_at|date:"M d, Y" }}</td>
+                    <td>
+                        {% if u.is_active %}
+                            <span class="status-pill status-completed"><span class="status-dot"></span> Active</span>
+                        {% else %}
+                            <span class="status-pill status-failed"><span class="status-dot"></span> Inactive</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <form method="post" action="{% url 'dashboard:toggle_user_active' u.pk %}">
+                            {% csrf_token %}
+                            {% if u.is_active %}
+                            <button type="submit" class="btn-sm-outline btn-danger-outline">Deactivate</button>
+                            {% else %}
+                            <button type="submit" class="btn-sm-outline">Activate</button>
+                            {% endif %}
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    {% if is_paginated %}
+    <div class="oversight-pagination">
+        {% if page_obj.has_previous %}
+        <a href="?page={{ page_obj.previous_page_number }}{% if current_role %}&role={{ current_role }}{% endif %}{% if current_search %}&q={{ current_search }}{% endif %}" class="btn-sm-outline">Previous</a>
+        {% endif %}
+        <span class="oversight-page-info">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+        {% if page_obj.has_next %}
+        <a href="?page={{ page_obj.next_page_number }}{% if current_role %}&role={{ current_role }}{% endif %}{% if current_search %}&q={{ current_search }}{% endif %}" class="btn-sm-outline">Next</a>
+        {% endif %}
+    </div>
+    {% endif %}
+
+    {% else %}
+    <div class="empty-state">
+        <div class="icon">👤</div>
+        <p>No users match your filters.</p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

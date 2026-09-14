@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% block title %}Sign Up{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-8 text-center mb-4">
+        <h1 class="fw-bold" style="letter-spacing: -0.02em;">Join EduSphere</h1>
+        <p class="text-muted">Choose how you'll show up on the platform.</p>
+    </div>
+</div>
+<div class="row justify-content-center g-4">
+    <div class="col-md-5">
+        <a href="{% url 'accounts:student_register' %}" class="text-decoration-none text-dark">
+            <div class="card choice-card student-card h-100">
+                <div class="emoji-badge">🎓</div>
+                <h4 class="fw-bold">I'm a Student</h4>
+                <p class="text-muted mb-0">Browse courses, learn at your pace, track your progress.</p>
+            </div>
+        </a>
+    </div>
+    <div class="col-md-5">
+        <a href="{% url 'accounts:instructor_register' %}" class="text-decoration-none text-dark">
+            <div class="card choice-card instructor-card h-100">
+                <div class="emoji-badge">👨‍🏫</div>
+                <h4 class="fw-bold">I'm an Instructor</h4>
+                <p class="text-muted mb-0">Create courses, manage students, share your expertise.</p>
+            </div>
+        </a>
+    </div>
+</div>
+{% endblock %}

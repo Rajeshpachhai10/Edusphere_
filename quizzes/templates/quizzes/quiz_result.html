@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Quiz Result - EduSphere{% endblock %}
+
+{% block content %}
+<div class="quiz-result-page">
+    <div class="container">
+        <div class="quiz-result-card {% if attempt.passed %}passed{% else %}failed{% endif %}">
+            <div class="quiz-result-icon">
+                {% if attempt.passed %}✓{% else %}✕{% endif %}
+            </div>
+            <h1>{% if attempt.passed %}You passed!{% else %}Not quite there{% endif %}</h1>
+            <p class="quiz-result-quiz-title">{{ attempt.quiz.title }}</p>
+
+            <div class="quiz-result-score">
+                <span class="quiz-result-score-number">{{ attempt.score }}</span>
+                <span class="quiz-result-score-divider">/</span>
+                <span class="quiz-result-score-total">{{ attempt.total_questions }}</span>
+            </div>
+            <p class="quiz-result-percentage">{{ attempt.score_percentage }}% · Passing score is {{ attempt.quiz.passing_score }}%</p>
+
+            <div class="quiz-result-actions">
+                <a href="{% url 'courses:course_detail' slug=attempt.quiz.module.course.slug %}" class="btn btn-outline-primary">
+                    Back to course
+                </a>
+                {% if not attempt.passed %}
+                <a href="{% url 'quizzes:quiz_detail' attempt.quiz.module.id %}" class="btn btn-accent">
+                    Try again
+                </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+{% block title %}Manage Quiz — {{ quiz.title }}{% endblock %}
+
+{% block content %}
+<div class="quiz-page">
+    <a href="{% url 'courses:manage_course' module.course.slug %}" class="forum-back-link">
+        &larr; {{ module.course.title }}
+    </a>
+
+    <div class="quiz-header" style="text-align: left;">
+        <h1>{{ quiz.title }}</h1>
+        <p class="quiz-instructions" style="margin: 0 0 16px;">
+            {{ quiz.questions.count }} question{{ quiz.questions.count|pluralize }} · Passing score: {{ quiz.passing_score }}%
+        </p>
+        <a href="{% url 'quizzes:add_question' module.id %}" class="btn btn-primary btn-sm mb-4">+ Add Question</a>
+    </div>
+
+    {% for question in questions %}
+    <div class="quiz-question-card">
+        <span class="quiz-question-number">Question {{ forloop.counter }}</span>
+        <p class="quiz-question-text">{{ question.text }}</p>
+        <div class="quiz-choices">
+            {% for choice in question.choices.all %}
+            <div class="quiz-choice-option" style="cursor: default; {% if choice.is_correct %}border-color: #4C9A6A; background-color: rgba(76,154,106,0.06);{% endif %}">
+                <span class="quiz-choice-text">
+                    {% if choice.is_correct %}✓{% else %}○{% endif %} {{ choice.text }}
+                </span>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% empty %}
+    <div class="empty-state">
+        <div class="icon">❓</div>
+        <p class="fw-bold mb-1">No questions yet</p>
+        <p class="mb-3">Add your first question to start building this quiz.</p>
+        <a href="{% url 'quizzes:add_question' module.id %}" class="btn btn-primary">+ Add Question</a>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

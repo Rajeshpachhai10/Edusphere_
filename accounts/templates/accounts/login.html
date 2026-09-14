@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+{% block title %}Login{% endblock %}
+
+{% block content %}
+<div class="auth-wrapper">
+    <div class="auth-brand-panel">
+        <h1>Pick up right where you left off.</h1>
+        <p class="lead-text">Your courses, progress, and instructors are waiting.</p>
+        <div class="journey-path">
+            <div class="journey-step"><span class="dot"></span><span class="label">Browse a course</span></div>
+            <div class="journey-step"><span class="dot"></span><span class="label">Enroll in minutes</span></div>
+            <div class="journey-step"><span class="dot"></span><span class="label">Learn at your pace</span></div>
+            <div class="journey-step"><span class="dot"></span><span class="label">Track your growth</span></div>
+        </div>
+    </div>
+    <div class="auth-form-panel">
+        <div class="auth-form-inner">
+            <h3>Welcome back</h3>
+            <p class="subtitle">Login to continue learning.</p>
+
+            <form method="POST" novalidate>
+                {% csrf_token %}
+                {% for field in form %}
+                    <div class="mb-3">
+                        <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                        {{ field }}
+                        {% if field.errors %}
+                            <div class="field-error">{{ field.errors.0 }}</div>
+                        {% endif %}
+                        {% if field.help_text %}
+                            <div class="text-muted" style="font-size: 0.8rem;">{{ field.help_text }}</div>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+                {% if form.non_field_errors %}
+                    <div class="field-error mb-2">{{ form.non_field_errors.0 }}</div>
+                {% endif %}
+                <button type="submit" class="btn btn-primary w-100">Login</button>
+            </form>
+
+            <p class="auth-switch-link">Don't have an account? <a href="{% url 'accounts:register_choice' %}">Sign up</a></p>
+        </div>
+    </div>
+</div>
+{% endblock %}

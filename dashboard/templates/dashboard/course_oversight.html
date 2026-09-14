@@ -1,0 +1,101 @@
+{% extends 'base.html' %}
+{% block title %}Course Oversight — EduSphere{% endblock %}
+
+{% block content %}
+<div class="dashboard-hero">
+    <div class="container">
+        <h1>Course Oversight</h1>
+        <p>All courses across every instructor</p>
+    </div>
+</div>
+
+<div class="container dashboard-container">
+    <form method="get" class="oversight-filter-bar">
+        <input
+            type="text"
+            name="q"
+            value="{{ current_search }}"
+            placeholder="Search by course title..."
+            class="form-control oversight-search-input"
+        >
+        <select name="status" class="form-control oversight-status-select">
+            <option value="" {% if current_status == '' %}selected{% endif %}>All statuses</option>
+            <option value="published" {% if current_status == 'published' %}selected{% endif %}>Published</option>
+            <option value="unpublished" {% if current_status == 'unpublished' %}selected{% endif %}>Unpublished</option>
+        </select>
+        <button type="submit" class="btn btn-primary">Filter</button>
+        {% if current_search or current_status %}
+        <a href="{% url 'dashboard:course_oversight' %}" class="btn btn-sm-outline">Clear</a>
+        {% endif %}
+    </form>
+
+    {% if courses %}
+    <div class="oversight-table-wrapper">
+        <table class="oversight-table">
+            <thead>
+                <tr>
+                    <th>Course</th>
+                    <th>Instructor</th>
+                    <th>Category</th>
+                    <th>Level</th>
+                    <th>Price</th>
+                    <th>Enrolled</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for course in courses %}
+                <tr>
+                    <td class="oversight-course-title">{{ course.title }}</td>
+                    <td>{{ course.instructor.email }}</td>
+                    <td>
+                        {% if course.category %}
+                            {{ course.category.name }}
+                        {% else %}
+                            <span class="text-muted">Uncategorized</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <span class="role-badge {{ course.level }}">{{ course.get_level_display }}</span>
+                    </td>
+                    <td>
+                        {% if course.price > 0 %}
+                            Rs. {{ course.price }}
+                        {% else %}
+                            Free
+                        {% endif %}
+                    </td>
+                    <td>{{ course.enrollment_count }}</td>
+                    <td>
+                        {% if course.is_published %}
+                            <span class="status-pill status-completed"><span class="status-dot"></span> Published</span>
+                        {% else %}
+                            <span class="status-pill status-pending"><span class="status-dot"></span> Draft</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    {% if is_paginated %}
+    <div class="oversight-pagination">
+        {% if page_obj.has_previous %}
+        <a href="?page={{ page_obj.previous_page_number }}{% if current_status %}&status={{ current_status }}{% endif %}{% if current_search %}&q={{ current_search }}{% endif %}" class="btn-sm-outline">Previous</a>
+        {% endif %}
+        <span class="oversight-page-info">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+        {% if page_obj.has_next %}
+        <a href="?page={{ page_obj.next_page_number }}{% if current_status %}&status={{ current_status }}{% endif %}{% if current_search %}&q={{ current_search }}{% endif %}" class="btn-sm-outline">Next</a>
+        {% endif %}
+    </div>
+    {% endif %}
+
+    {% else %}
+    <div class="empty-state">
+        <div class="icon">📚</div>
+        <p>No courses match your filters.</p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

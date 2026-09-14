@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% block title %}New Thread - {{ course.title }}{% endblock %}
+
+{% block content %}
+<div class="forum-page">
+    <div class="container">
+        <div class="forum-form-card">
+            <span class="forum-eyebrow">{{ course.title }}</span>
+            <h1>Start a Discussion</h1>
+
+            <form method="post">
+                {% csrf_token %}
+                <label for="id_title">Title</label>
+                <input type="text" id="id_title" name="title" class="form-control" placeholder="What's your question about?" required>
+
+                <label for="id_body">Details</label>
+                <textarea id="id_body" name="body" class="form-control" rows="6" placeholder="Explain what you're stuck on..." required></textarea>
+
+                <div class="forum-form-actions">
+                    <a href="{% url 'forums:thread_list' course.slug %}" class="btn btn-outline-primary">Cancel</a>
+                    <button type="submit" class="btn btn-accent">Post Thread</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

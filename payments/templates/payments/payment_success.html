@@ -1,0 +1,113 @@
+{% extends 'base.html' %}
+{% block content %}
+<style>
+  .payment-result-wrap {
+    min-height: 70vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #1E3A5F 0%, #2C5282 100%);
+    padding: 3rem 1rem;
+  }
+  .payment-result-card {
+    background: #fff;
+    border-radius: 20px;
+    max-width: 480px;
+    width: 100%;
+    padding: 3rem 2.5rem;
+    text-align: center;
+    box-shadow: 0 20px 60px rgba(30, 58, 95, 0.35);
+    position: relative;
+    overflow: hidden;
+    animation: cardRise 0.5s ease-out;
+  }
+  @keyframes cardRise {
+    from { opacity: 0; transform: translateY(24px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .payment-result-card::before {
+    content: "";
+    position: absolute;
+    top: -60px;
+    right: -60px;
+    width: 160px;
+    height: 160px;
+    background: rgba(232, 163, 61, 0.12);
+    border-radius: 50%;
+  }
+  .success-icon-circle {
+    width: 84px;
+    height: 84px;
+    border-radius: 50%;
+    background: #E8A33D;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1.5rem;
+    box-shadow: 0 8px 24px rgba(232, 163, 61, 0.4);
+    animation: popIn 0.4s ease-out 0.15s backwards;
+  }
+  @keyframes popIn {
+    0% { transform: scale(0); }
+    70% { transform: scale(1.12); }
+    100% { transform: scale(1); }
+  }
+  .success-icon-circle svg { width: 42px; height: 42px; }
+  .payment-result-title {
+    font-family: 'Space Grotesk', sans-serif;
+    color: #1E3A5F;
+    font-weight: 700;
+    font-size: 1.6rem;
+    margin-bottom: 0.6rem;
+  }
+  .payment-result-course {
+    font-family: 'Space Grotesk', sans-serif;
+    color: #1E3A5F;
+  }
+  .txn-pill {
+    display: inline-block;
+    background: #f4f6f9;
+    color: #6c7a89;
+    font-size: 0.78rem;
+    padding: 0.4rem 0.9rem;
+    border-radius: 999px;
+    margin: 1.2rem 0 1.6rem;
+    font-family: monospace;
+  }
+  .btn-esewa-success {
+    background: #1E3A5F;
+    color: #fff;
+    border: none;
+    padding: 0.7rem 2rem;
+    border-radius: 10px;
+    font-weight: 600;
+    transition: transform 0.15s ease, background 0.15s ease;
+  }
+  .btn-esewa-success:hover {
+    background: #E8A33D;
+    color: #1E3A5F;
+    transform: translateY(-2px);
+  }
+</style>
+
+<div class="payment-result-wrap">
+  <div class="payment-result-card">
+    <div class="success-icon-circle">
+      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M5 13l4 4L19 7" stroke="#1E3A5F" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
+    <h2 class="payment-result-title">Payment Successful!</h2>
+    <p class="text-muted mb-2">
+      You're officially enrolled in<br>
+      <span class="payment-result-course fw-semibold">{{ order.course.title }}</span>
+    </p>
+    <div class="txn-pill">TXN: {{ order.transaction_uuid }}</div>
+    <div>
+      <a href="{% url 'courses:course_detail' slug=order.course.slug %}" class="btn btn-esewa-success">
+        Start Learning →
+      </a>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+{% block title %}Discussions - {{ course.title }}{% endblock %}
+
+{% block content %}
+<div class="forum-page">
+    <div class="container">
+        <div class="forum-header">
+            <div>
+                <span class="forum-eyebrow">{{ course.title }}</span>
+                <h1>Discussions</h1>
+            </div>
+            <a href="{% url 'forums:create_thread' course.slug %}" class="btn btn-accent">+ New Thread</a>
+        </div>
+
+        <div class="forum-thread-list">
+            {% for thread in threads %}
+            <a href="{% url 'forums:thread_detail' thread.id %}" class="forum-thread-row {% if thread.is_pinned %}pinned{% endif %}">
+                <div class="forum-thread-main">
+                    {% if thread.is_pinned %}<span class="forum-pin-badge">📌 Pinned</span>{% endif %}
+                    <h3>{{ thread.title }}</h3>
+                    <p class="forum-thread-preview">{{ thread.body|truncatewords:20 }}</p>
+                    <div class="forum-thread-meta">
+                        <span>{{ thread.author.first_name }} {{ thread.author.last_name }}</span>
+                        <span>·</span>
+                        <span>{{ thread.created_at|date:"M d, Y" }}</span>
+                    </div>
+                </div>
+                <div class="forum-thread-replies">
+                    <span class="forum-reply-count">{{ thread.reply_count }}</span>
+                    <span class="forum-reply-label">repl{{ thread.reply_count|pluralize:"y,ies" }}</span>
+                </div>
+            </a>
+            {% empty %}
+            <div class="empty-state">
+                <div class="icon">💬</div>
+                <p>No discussions yet — be the first to ask a question.</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

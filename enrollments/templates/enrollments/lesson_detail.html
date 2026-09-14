@@ -1,0 +1,117 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ lesson.title }} — {{ course.title }}{% endblock %}
+
+{% block content %}
+<div class="lesson-page">
+
+  <!-- Top bar: course context + progress -->
+  <div class="lesson-topbar">
+    <a href="{% url 'courses:course_detail' course.slug %}" class="lesson-back-link">
+      &larr; {{ course.title }}
+    </a>
+    <div class="lesson-progress-pill">
+      {{ progress.completed|yesno:"Completed,In Progress" }}
+    </div>
+  </div>
+
+  <div class="lesson-layout">
+
+    <!-- Main content area -->
+    <main class="lesson-content-panel">
+      <span class="lesson-type-badge lesson-type-{{ lesson.content_type }}">
+        {{ lesson.get_content_type_display }}
+      </span>
+      <h1 class="lesson-title">{{ lesson.title }}</h1>
+
+      {% if lesson.content_type == 'video' %}
+      <div class="lesson-video-wrapper">
+        <iframe src="{{ lesson.video_url }}" title="{{ lesson.title }}" frameborder="0"
+          referrerpolicy="strict-origin-when-cross-origin"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+          allowfullscreen>
+        </iframe>
+      </div>
+      {% elif lesson.content_type == 'pdf' %}
+      <div class="lesson-pdf-card">
+        <div class="lesson-pdf-icon">📄</div>
+        <div class="lesson-pdf-info">
+          <p class="lesson-pdf-filename">{{ lesson.pdf_file.name|cut:"lesson_pdfs/" }}</p>
+          <p class="lesson-pdf-meta">PDF Document</p>
+        </div>
+        <a href="{{ lesson.pdf_file.url }}" target="_blank" class="btn-view-pdf">
+          View PDF
+        </a>
+      </div>
+      {% else %}
+      <div class="lesson-text-content">
+        {{ lesson.text_content|linebreaks }}
+      </div>
+      {% endif %}
+
+      <!-- Mark complete -->
+      <form method="post" action="{% url 'enrollments:mark_complete' lesson.id %}" class="lesson-complete-form">
+        {% csrf_token %}
+        {% if progress.completed %}
+        <button type="submit" class="btn-complete btn-complete-done" disabled>
+          ✓ Completed
+        </button>
+        {% else %}
+        <button type="submit" class="btn-complete">
+          Mark as Complete
+        </button>
+        {% endif %}
+      </form>
+
+      <!-- Prev / Next navigation -->
+      <div class="lesson-nav">
+        {% if prev_lesson %}
+        <a href="{% url 'enrollments:lesson_detail' course.slug prev_lesson.id %}"
+          class="lesson-nav-btn lesson-nav-prev">
+          &larr; {{ prev_lesson.title }}
+        </a>
+        {% else %}
+        <span></span>
+        {% endif %}
+
+        {% if next_lesson %}
+        <a href="{% url 'enrollments:lesson_detail' course.slug next_lesson.id %}"
+          class="lesson-nav-btn lesson-nav-next">
+          {{ next_lesson.title }} &rarr;
+        </a>
+        {% endif %}
+      </div>
+    </main>
+
+    <!-- Sidebar: course outline -->
+    <aside class="lesson-sidebar">
+      <a href="{% url 'forums:thread_list' course.slug %}" class="lesson-sidebar-forum-link">
+        💬 Course Discussions
+      </a>
+
+      <h3 class="lesson-sidebar-title">Course Content</h3>
+      {% for module in course.modules.all %}
+      <div class="lesson-sidebar-module">
+        <p class="lesson-sidebar-module-title">{{ module.title }}</p>
+        <ul class="lesson-sidebar-lesson-list">
+          {% for l in module.lessons.all %}
+          <li class="{% if l.id == lesson.id %}lesson-sidebar-active{% endif %}">
+            <a href="{% url 'enrollments:lesson_detail' course.slug l.id %}">
+              {{ l.title }}
+            </a>
+          </li>
+          {% endfor %}
+        </ul>
+        {% if module.quiz %}
+        <a href="{% url 'quizzes:quiz_detail' module.id %}" class="lesson-sidebar-quiz-link">
+          📝 Take Quiz: {{ module.quiz.title }}
+        </a>
+        {% endif %}
+      </div>
+      {% endfor %}
+    </aside>
+
+  </div>
+</div>
+{% endblock %}

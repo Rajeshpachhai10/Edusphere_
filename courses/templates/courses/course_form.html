@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% block title %}Create Course{% endblock %}
+
+{% block content %}
+<div class="container mt-5" style="max-width: 600px;">
+    <h3 class="fw-bold mb-1">Create a New Course</h3>
+    <p class="text-muted mb-4">Fill in the basics — you can add modules and lessons after.</p>
+    <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        {% for field in form %}
+            <div class="mb-3">
+                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                {{ field }}
+                {% if field.errors %}<div class="field-error">{{ field.errors.0 }}</div>{% endif %}
+            </div>
+        {% endfor %}
+        <button type="submit" class="btn btn-primary w-100">Create Course</button>
+    </form>
+</div>
+{% endblock %}

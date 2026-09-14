@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+{% block title %}Add Quiz — {{ module.title }}{% endblock %}
+
+{% block content %}
+<div class="quiz-page">
+    <a href="{% url 'courses:manage_course' module.course.slug %}" class="forum-back-link">
+        &larr; {{ module.course.title }}
+    </a>
+
+    <div class="forum-form-card">
+        <h1>Add Quiz to "{{ module.title }}"</h1>
+
+        <form method="post">
+            {% csrf_token %}
+
+            <label for="{{ form.title.id_for_label }}">Quiz Title</label>
+            {{ form.title }}
+            {% if form.title.errors %}
+                <div class="field-error">{{ form.title.errors.0 }}</div>
+            {% endif %}
+
+            <label for="{{ form.instructions.id_for_label }}">Instructions</label>
+            {{ form.instructions }}
+            {% if form.instructions.errors %}
+                <div class="field-error">{{ form.instructions.errors.0 }}</div>
+            {% endif %}
+
+            <label for="{{ form.passing_score.id_for_label }}">Passing Score (%)</label>
+            {{ form.passing_score }}
+            {% if form.passing_score.errors %}
+                <div class="field-error">{{ form.passing_score.errors.0 }}</div>
+            {% endif %}
+
+            <div class="forum-form-actions">
+                <a href="{% url 'courses:manage_course' module.course.slug %}" class="btn btn-outline-secondary">Cancel</a>
+                <button type="submit" class="btn btn-primary">Create Quiz</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

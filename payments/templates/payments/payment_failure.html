@@ -1,0 +1,81 @@
+{% extends 'base.html' %}
+{% block content %}
+<style>
+  .payment-result-wrap {
+    min-height: 70vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #3a3a3a 0%, #1E3A5F 100%);
+    padding: 3rem 1rem;
+  }
+  .payment-result-card {
+    background: #fff;
+    border-radius: 20px;
+    max-width: 480px;
+    width: 100%;
+    padding: 3rem 2.5rem;
+    text-align: center;
+    box-shadow: 0 20px 60px rgba(0,0,0, 0.3);
+    animation: cardRise 0.5s ease-out;
+  }
+  @keyframes cardRise {
+    from { opacity: 0; transform: translateY(24px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .failure-icon-circle {
+    width: 84px;
+    height: 84px;
+    border-radius: 50%;
+    background: #fbeaea;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1.5rem;
+    animation: shake 0.5s ease-out 0.15s;
+  }
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    20%, 60% { transform: translateX(-6px); }
+    40%, 80% { transform: translateX(6px); }
+  }
+  .failure-icon-circle svg { width: 40px; height: 40px; }
+  .payment-result-title {
+    font-family: 'Space Grotesk', sans-serif;
+    color: #c0392b;
+    font-weight: 700;
+    font-size: 1.6rem;
+    margin-bottom: 0.6rem;
+  }
+  .btn-esewa-retry {
+    background: #E8A33D;
+    color: #1E3A5F;
+    border: none;
+    padding: 0.7rem 2rem;
+    border-radius: 10px;
+    font-weight: 600;
+    transition: transform 0.15s ease;
+  }
+  .btn-esewa-retry:hover {
+    transform: translateY(-2px);
+    color: #1E3A5F;
+  }
+</style>
+
+<div class="payment-result-wrap">
+  <div class="payment-result-card">
+    <div class="failure-icon-circle">
+      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M6 6l12 12M18 6L6 18" stroke="#c0392b" stroke-width="3" stroke-linecap="round"/>
+      </svg>
+    </div>
+    <h2 class="payment-result-title">Payment Didn't Go Through</h2>
+    <p class="text-muted mb-4">
+      No amount was charged. You can try again whenever you're ready.
+    </p>
+    <a href="{% url 'courses:course_list' %}" class="btn btn-esewa-retry">
+      Back to Courses
+    </a>
+  </div>
+</div>
+{% endblock %}
